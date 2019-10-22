@@ -24,7 +24,7 @@ class CheckoutDataModel:
         self.metadata = {}
 
     def __str__(self):
-        return f'Checkout data for {self.buyer}'
+        return f"Checkout data for {self.buyer}"
 
     def as_dict(self) -> Dict:
         data = {
@@ -33,7 +33,7 @@ class CheckoutDataModel:
             "items": self.items,
             "redirectUrl": self.redirect_urls,
             "requestReferenceNumber": self.request_reference_number,
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
         return data
 

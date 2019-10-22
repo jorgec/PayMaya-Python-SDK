@@ -1,10 +1,14 @@
 import base64
-from typing import Dict, List
+from typing import Dict
 
-from core.constants import PRODUCTION, CHECKOUT_PRODUCTION_URL, CHECKOUT_SANDBOX_URL, CHECKOUTS_URL
+from core.constants import (
+    PRODUCTION,
+    CHECKOUT_PRODUCTION_URL,
+    CHECKOUT_SANDBOX_URL,
+    CHECKOUTS_URL,
+)
 from core.http_config import HTTPConfig, HTTP_POST
 from core.http_connection import HTTPConnection
-from models.buyer_models import BuyerModel
 from models.checkout_data_models import CheckoutDataModel
 from paymaya_sdk import PayMayaSDK
 
@@ -52,7 +56,7 @@ class CheckoutAPIManager:
         http_config = HTTPConfig(
             url=f"{self.base_url}{CHECKOUTS_URL}",
             method=HTTP_POST,
-            headers=self.http_headers
+            headers=self.http_headers,
         )
         http_connection = HTTPConnection(config=http_config)
 

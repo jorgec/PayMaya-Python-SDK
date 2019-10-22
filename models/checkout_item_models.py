@@ -12,15 +12,15 @@ class CheckoutItemModel:
     total_amount: TotalAmountModel
 
     def __init__(self):
-        self.name = ''
-        self.code = ''
-        self.description = ''
+        self.name = ""
+        self.code = ""
+        self.description = ""
         self.quantity = 0
         self.amount = TotalAmountModel()
         self.total_amount = TotalAmountModel()
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
     def as_dict(self):
         data = {
@@ -29,7 +29,7 @@ class CheckoutItemModel:
             "description": self.description,
             "quantity": self.quantity,
             "amount": self.amount.as_dict(),
-            "totalAmount": self.total_amount.as_dict()
+            "totalAmount": self.total_amount.as_dict(),
         }
 
         return data

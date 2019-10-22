@@ -13,7 +13,12 @@ class PaymentModel:
     redirect_urls: Dict
 
     def __init__(
-        self, *, token: str, buyer: BuyerModel, amount: AmountModel, urls: Dict = REDIRECT_URLS
+        self,
+        *,
+        token: str,
+        buyer: BuyerModel,
+        amount: AmountModel,
+        urls: Dict = REDIRECT_URLS
     ):
         self.token = token
         self.amount = amount

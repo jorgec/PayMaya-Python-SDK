@@ -27,7 +27,7 @@ class BuyerAddress:
         self.country = country
 
     def __str__(self):
-        return f'{self.address1} {self.address2} {self.city}'
+        return f"{self.address1} {self.address2} {self.city}"
 
     def as_dict(self):
         data = {
@@ -48,20 +48,12 @@ class BuyerContact:
     phone: str
     email: str
 
-    def __init__(
-        self,
-        *,
-        phone: str = "",
-        email: str = ""
-    ):
+    def __init__(self, *, phone: str = "", email: str = ""):
         self.phone = phone
         self.email = email
 
     def as_dict(self):
-        data = {
-            "phone": self.phone,
-            "email": self.email
-        }
+        data = {"phone": self.phone, "email": self.email}
         return data
 
     def serialize(self):
@@ -78,11 +70,7 @@ class BuyerModel:
     ip_address: str
 
     def __init__(
-        self,
-        *,
-        first_name: str = "",
-        middle_name: str = "",
-        last_name: str = "",
+        self, *, first_name: str = "", middle_name: str = "", last_name: str = ""
     ):
         self.first_name = first_name
         self.middle_name = middle_name
@@ -103,7 +91,7 @@ class BuyerModel:
             "contact": self.contact.as_dict(),
             "billingAddress": self.billing_address.as_dict(),
             "shippingAddress": self.shipping_address.as_dict(),
-            "ipAddress": self.ip_address
+            "ipAddress": self.ip_address,
         }
 
         return data

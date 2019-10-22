@@ -56,7 +56,7 @@ class TotalAmountModel:
             "totalAmount": {
                 "currency": self.amount.currency_code,
                 "value": self.amount.total,
-                "details": self.details.as_dict()
+                "details": self.details.as_dict(),
             }
         }
         return data
