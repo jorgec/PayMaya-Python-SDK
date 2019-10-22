@@ -6,7 +6,7 @@ MASTERCARD = "MasterCard"
 VISA = "Visa"
 
 
-class Card:
+class CardModel:
     card_type: str
     number: str
     expiry_month: str

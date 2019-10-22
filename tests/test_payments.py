@@ -5,8 +5,8 @@ import unittest
 from faker import Faker
 
 from api.payment_api import PaymentAPI
-from models.amount_model import Amount
-from models.buyer_model import Buyer
+from models.amount_model import AmountModel
+from models.buyer_model import BuyerModel
 from paymaya_sdk import PayMayaSDK
 from .cards import ms_2
 from .merchants import m1
@@ -28,10 +28,10 @@ class PaymentTests(unittest.TestCase):
         assert token_result
 
         amt = decimal.Decimal(random.uniform(100, 10000))
-        amount = Amount(total=amt, currency_code="PHP")
+        amount = AmountModel(total=amt, currency_code="PHP")
 
         profile = fake.profile()
-        buyer = Buyer(
+        buyer = BuyerModel(
             first_name=profile.get("name").split(" ")[0],
             last_name=profile.get("name").split(" ")[-1],
             # phone=fake.phone_number(),

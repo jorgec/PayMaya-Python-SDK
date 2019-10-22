@@ -10,9 +10,9 @@ from core.constants import (
 )
 from core.http_config import HTTPConfig, HTTP_POST, HTTP_GET
 from core.http_connection import HTTPConnection
-from models.amount_model import Amount
-from models.buyer_model import Buyer
-from models.card_model import Card
+from models.amount_model import AmountModel
+from models.buyer_model import BuyerModel
+from models.card_model import CardModel
 from models.payment_model import PaymentModel
 from paymaya_sdk import PayMayaSDK
 
@@ -26,8 +26,8 @@ class PaymentAPIManager:
     token: str = None
     token_state: str = None
     status_code: int = None
-    buyer: Buyer = None
-    amount: Amount = None
+    buyer: BuyerModel = None
+    amount: AmountModel = None
     payments: List = []
 
     def __init__(self):
@@ -53,7 +53,7 @@ class PaymentAPIManager:
         token = base64.b64encode(api_key.encode("utf-8"))
         self.http_headers["Authorization"] = f"Basic {token.decode()}:"
 
-    def create_payment_token(self, card: Card = None) -> bool:
+    def create_payment_token(self, card: CardModel = None) -> bool:
         self.use_basic_auth_with_api_key(self.public_api_key)
         http_config = HTTPConfig(
             url=f"{self.base_url}{PAYMENTS_TOKEN_URL}",
@@ -72,7 +72,7 @@ class PaymentAPIManager:
         return False
 
     def charge_card(
-        self, buyer: Buyer, amount: Amount, redirect_urls: Dict = None
+        self, buyer: BuyerModel, amount: AmountModel, redirect_urls: Dict = None
     ) -> bool:
         if not self.token:
             raise ValueError("Cannot pay without token")

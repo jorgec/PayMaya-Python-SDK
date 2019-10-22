@@ -3,16 +3,16 @@ PayMaya test cards
 Source: https://developers.paymaya.com/blog/entry/api-test-merchants-and-test-cards
 """
 
-from models.card_model import Card
+from models.card_model import CardModel
 
-ms_1 = Card(
+ms_1 = CardModel(
     number="5123456789012346",
     expiry_month="12",
     expiry_year="2025",
     cvc="111",
     card_type="MASTERCARD",
 )
-ms_2 = Card(
+ms_2 = CardModel(
     number="5453010000064154",
     expiry_month="12",
     expiry_year="2025",
@@ -20,7 +20,7 @@ ms_2 = Card(
     card_type="MASTERCARD",
     password="secbarry1",
 )
-v_1 = Card(
+v_1 = CardModel(
     number="4123450131001381",
     expiry_month="12",
     expiry_year="2025",
@@ -28,7 +28,7 @@ v_1 = Card(
     card_type="VISA",
     password="mctest1",
 )
-v_2 = Card(
+v_2 = CardModel(
     number="4123450131001522",
     expiry_month="12",
     expiry_year="2025",
@@ -36,7 +36,7 @@ v_2 = Card(
     card_type="VISA",
     password="mctest1",
 )
-v_3 = Card(
+v_3 = CardModel(
     number="4123450131004443",
     expiry_month="12",
     expiry_year="2025",
@@ -44,7 +44,7 @@ v_3 = Card(
     card_type="VISA",
     password="mctest1",
 )
-v_4 = Card(
+v_4 = CardModel(
     number="4123450131000508",
     expiry_month="12",
     expiry_year="2025",

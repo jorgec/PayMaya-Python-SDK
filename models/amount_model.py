@@ -2,7 +2,7 @@ import json
 from decimal import Decimal
 
 
-class Amount:
+class AmountModel:
     total: Decimal
     currency_code: str
 

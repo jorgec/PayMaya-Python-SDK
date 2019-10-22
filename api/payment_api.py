@@ -2,26 +2,26 @@ from typing import Dict, List
 
 from core.constants import REDIRECT_URLS
 from core.payment_api_manager import PaymentAPIManager
-from models.amount_model import Amount
-from models.buyer_model import Buyer
-from models.card_model import Card
+from models.amount_model import AmountModel
+from models.buyer_model import BuyerModel
+from models.card_model import CardModel
 
 
 class PaymentAPI:
     token: str = None
-    amount: Amount = None
-    buyer: Buyer = None
-    __card: Card = None
+    amount: AmountModel = None
+    buyer: BuyerModel = None
+    __card: CardModel = None
     redirect_urls: Dict = None
 
     manager: PaymentAPIManager
 
     @property
-    def card(self) -> Card:
+    def card(self) -> CardModel:
         return self.__card
 
     @card.setter
-    def card(self, card: Card):
+    def card(self, card: CardModel):
         self.__card = card
         self.token = ""
         self.manager = PaymentAPIManager()
