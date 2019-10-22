@@ -1,6 +1,6 @@
 import requests
 
-from core.http_config import HTTPConfig, HTTP_POST
+from core.http_config import HTTPConfig, HTTP_POST, HTTP_GET
 
 
 class HTTPConnection:
@@ -12,17 +12,24 @@ class HTTPConnection:
 
         self.http_config = config
 
-    def execute(self, *, data) -> requests.Response:
+    def execute(self, *, data: None) -> requests.Response:
         """
 
         :param data: JSON encoded payload
         :return:
         """
+        params = {"url": self.http_config.url, "headers": self.http_config.headers}
+
+        if data:
+            params["data"] = data
+
         if self.http_config.method == HTTP_POST:
-            response = requests.post(
-                url=self.http_config.url, data=data, headers=self.http_config.headers
-            )
+            response = requests.post(**params)
 
-            return response
+        elif self.http_config.method == HTTP_GET:
+            response = requests.get(**params)
 
-        raise ValueError("Not implemented yet")
+        else:
+            raise ValueError("Method not implemented!")
+
+        return response

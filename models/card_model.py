@@ -2,8 +2,8 @@ import datetime
 import json
 
 # CC Types
-MASTERCARD = 'MasterCard'
-VISA = 'Visa'
+MASTERCARD = "MasterCard"
+VISA = "Visa"
 
 
 class Card:
@@ -14,8 +14,16 @@ class Card:
     cvc: str
     password: str
 
-    def __init__(self, *, number: str, expiry_month: str, expiry_year: str, cvc: str, card_type: str,
-                 password: str = None):
+    def __init__(
+        self,
+        *,
+        number: str,
+        expiry_month: str,
+        expiry_year: str,
+        cvc: str,
+        card_type: str,
+        password: str = None,
+    ):
         """
 
         :param number:
@@ -46,8 +54,8 @@ class Card:
         self.password = password
 
     def __str__(self):
-        pad = 'X' * (len(self.number) - 6)
-        return f'{self.number[:3]}{pad}{self.number[-3:]}'
+        pad = "X" * (len(self.number) - 6)
+        return f"{self.number[:3]}{pad}{self.number[-3:]}"
 
     @staticmethod
     def validate_cvc(cvc: str) -> bool:
@@ -92,4 +100,4 @@ class Card:
 
     def serialize(self):
 
-        return json.dumps({'card': self.as_dict()})
+        return json.dumps({"card": self.as_dict()})

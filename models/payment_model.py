@@ -2,23 +2,18 @@ import json
 from typing import Dict
 
 from core.constants import REDIRECT_URLS
-from .amount import Amount
-from .buyer import Buyer
+from .amount_model import Amount
+from .buyer_model import Buyer
 
 
-class Payment:
+class PaymentModel:
     token: str
     amount: Amount
     buyer: Buyer
     redirect_urls: Dict
 
     def __init__(
-        self,
-        *,
-        token: str,
-        buyer: Buyer,
-        amount: Amount,
-        urls: Dict = REDIRECT_URLS
+        self, *, token: str, buyer: Buyer, amount: Amount, urls: Dict = REDIRECT_URLS
     ):
         self.token = token
         self.amount = amount
@@ -30,7 +25,7 @@ class Payment:
             "paymentTokenId": self.token,
             "totalAmount": self.amount.as_dict(),
             "buyer": self.buyer.as_dict(),
-            "redirectUrl": self.redirect_urls
+            "redirectUrl": self.redirect_urls,
         }
 
         return data

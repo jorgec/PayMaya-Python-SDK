@@ -15,8 +15,4 @@ PAYMENTS_TOKEN_URL = "/v1/payment-tokens"
 PAYMENTS_URL = "/v1/payments"
 
 # Redirect URLS
-REDIRECT_URLS = {
-    "success": "",
-    "failure": "",
-    "cancel": ""
-}
+REDIRECT_URLS = {"success": "", "failure": "", "cancel": ""}
