@@ -37,7 +37,7 @@ Secret API Key: sk-uh4ZFfx9i0rZpKN6CxJ826nVgJ4saGGVAH9Hk7WrY6Q
 Upon successful integration testing, you can then request for production credentials. Upon receipt, just change your SDK initialization to use production environment to start accepting live transactions.
 
 ## Usage
-1. Import the SDK and the API libraries
+#### 1. Import the SDK and the API libraries
 ```python
 from paymaya_sdk import PayMayaSDK
 from api.payment_api import PaymentAPI
@@ -48,15 +48,15 @@ from models.card_model import CardModel
 # for amounts
 from decimal import Decimal
 ```
-1. Initialize SDK with public-facing API key, secret API key, and the intended environment ("SANDBOX" or "PRODUCTION)
+#### 2. Initialize SDK with public-facing API key, secret API key, and the intended environment ("SANDBOX" or "PRODUCTION)
 ```python
 PayMayaSDK.get_instance().init_payment(public_api_key=<PUBLIC_KEY>, secret_api_key=<SECRET_KEY>, environment=<"SANDBOX"/"PRODUCTION">)
 ```
-1. Initialize the payment object:
+#### 3. Initialize the payment object:
 ```python
 payment = PaymentAPI()
 ```
-1. Create the Card object and tokenize it
+#### 4. Create the Card object and tokenize it
 ```python
 payment.card = CardModel(
     number="5123456789012346",
@@ -68,7 +68,7 @@ payment.card = CardModel(
 
 payment.create_token()
 ```
-1. Create the Buyer and Amount objects, and execute a payment
+#### 5. Create the Buyer and Amount objects, and execute a payment
 ```python
 payment.amount = AmountModel(total=Decimal(1000), currency_code='PHP')
 payment.buyer = BuyerModel(
@@ -86,12 +86,12 @@ payment.buyer = BuyerModel(
 )
 payment.execute_payment()
 ```
-1. Check payments executed:
+#### 6. Check payments executed:
 ```python
 # returns a list of dictionaries with the json responses
 payment.payments()
 ```
-1. Query payment
+#### 7. Query payments
 ```python
 payment.query_payment(payment_id=<uuid>)
 ```
