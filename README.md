@@ -3,8 +3,11 @@ This SDK allows Python applications to accept payments from MasterCard/Visa card
 
 I've tried to pattern the flow on the existing PayMaya SDK libraries as much as possible (ref: <a href="https://github.com/PayMaya/PayMaya-PHP-SDK/">PayMaya PHP SDK</a>) 
 
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![Build Status](https://travis-ci.com/jorgec/PayMaya-Python-SDK.svg?branch=master)](https://travis-ci.com/jorgec/PayMaya-Python-SDK)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![codecov](https://codecov.io/gh/jorgec/PayMaya-Python-SDK/branch/master/graph/badge.svg)](https://codecov.io/gh/jorgec/PayMaya-Python-SDK)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Prerequisites
