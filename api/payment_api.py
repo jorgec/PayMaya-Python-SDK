@@ -2,13 +2,12 @@ from typing import Dict, List
 
 from core.constants import REDIRECT_URLS
 from core.payment_api_manager import PaymentAPIManager
-from models.amount_model import AmountModel
-from models.buyer_model import BuyerModel
-from models.card_model import CardModel
+from models.amount_models import AmountModel
+from models.buyer_models import BuyerModel
+from models.card_models import CardModel
 
 
 class PaymentAPI:
-    token: str = None
     amount: AmountModel = None
     buyer: BuyerModel = None
     __card: CardModel = None
@@ -17,17 +16,23 @@ class PaymentAPI:
     manager: PaymentAPIManager
 
     @property
+    def token(self) -> str:
+        return self.manager.token
+
+    @token.setter
+    def token(self, *args, **kwargs) -> None:
+        pass
+
+    @property
     def card(self) -> CardModel:
         return self.__card
 
     @card.setter
     def card(self, card: CardModel):
         self.__card = card
-        self.token = ""
         self.manager = PaymentAPIManager()
 
     def __init__(self):
-        self.token = ""
         self.manager = PaymentAPIManager()
 
     def create_token(self) -> bool:
@@ -36,7 +41,6 @@ class PaymentAPI:
 
         result = self.manager.create_payment_token(card=self.card)
         if result:
-            self.token = self.manager.token
             return True
         return False
 

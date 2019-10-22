@@ -10,10 +10,10 @@ from core.constants import (
 )
 from core.http_config import HTTPConfig, HTTP_POST, HTTP_GET
 from core.http_connection import HTTPConnection
-from models.amount_model import AmountModel
-from models.buyer_model import BuyerModel
-from models.card_model import CardModel
-from models.payment_model import PaymentModel
+from models.amount_models import AmountModel
+from models.buyer_models import BuyerModel
+from models.card_models import CardModel
+from models.payment_models import PaymentModel
 from paymaya_sdk import PayMayaSDK
 
 

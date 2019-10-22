@@ -2,8 +2,8 @@ import json
 from typing import Dict
 
 from core.constants import REDIRECT_URLS
-from .amount_model import AmountModel
-from .buyer_model import BuyerModel
+from .amount_models import AmountModel
+from .buyer_models import BuyerModel
 
 
 class PaymentModel:

@@ -5,8 +5,8 @@ import unittest
 from faker import Faker
 
 from api.payment_api import PaymentAPI
-from models.amount_model import AmountModel
-from models.buyer_model import BuyerModel
+from models.amount_models import AmountModel
+from models.buyer_models import BuyerModel
 from paymaya_sdk import PayMayaSDK
 from .cards import ms_2
 from .merchants import m1
@@ -34,14 +34,6 @@ class PaymentTests(unittest.TestCase):
         buyer = BuyerModel(
             first_name=profile.get("name").split(" ")[0],
             last_name=profile.get("name").split(" ")[-1],
-            # phone=fake.phone_number(),
-            email=profile.get("mail"),
-            address1=fake.street_address(),
-            address2=fake.secondary_address(),
-            city=fake.city(),
-            state=fake.state(),
-            zip_code=fake.zipcode(),
-            country=fake.country_code(representation="alpha-2"),
         )
 
         payment.buyer = buyer
