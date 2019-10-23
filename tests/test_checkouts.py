@@ -2,7 +2,6 @@ import decimal
 import random
 import unittest
 
-import dumper
 from faker import Faker
 
 from models.amount_models import AmountModel, TotalAmountModel
@@ -57,4 +56,4 @@ class CheckoutTests(unittest.TestCase):
 
         result = checkout.execute()
 
-        assert result, dumper.dump(checkout)
+        assert result
