@@ -40,6 +40,11 @@ Secret API Key: sk-uh4ZFfx9i0rZpKN6CxJ826nVgJ4saGGVAH9Hk7WrY6Q
 Upon successful integration testing, you can then request for production credentials. Upon receipt, just change your SDK initialization to use production environment to start accepting live transactions.
 
 ## Usage
+### Models
+The data models have 2 convenience functions: `as_dict()` and `serialize()`:
+- `as_dict()` returns a Dict with keys matching the ones expected by the PayMaya API, and converting all data into JSON-safe types (str mostly)
+- `serialize()` returns a JSON dump of `as_dict()`
+### Payments
 #### 1. Import the SDK and the API libraries
 ```python
 from paymaya_sdk import PayMayaSDK
@@ -53,11 +58,16 @@ from decimal import Decimal
 ```
 #### 2. Initialize SDK with public-facing API key, secret API key, and the intended environment ("SANDBOX" or "PRODUCTION)
 ```python
-PayMayaSDK.get_instance().init_payment(public_api_key=<PUBLIC_KEY>, secret_api_key=<SECRET_KEY>, environment=<"SANDBOX"/"PRODUCTION">)
+paymaya = PayMayaSDK()
+paymaya.set_keys(
+    public_api_key=<PUBLIC_KEY>,
+    secret_api_key=<SECRET_KEY>,
+    environment=<"SANDBOX/PRODUCTION">
+)
 ```
 #### 3. Initialize the payment object:
 ```python
-payment = PaymentAPI()
+payment = paymaya.payment()
 ```
 #### 4. Create the Card object and tokenize it
 ```python
@@ -98,8 +108,68 @@ payment.payments()
 ```python
 payment.query_payment(payment_id=<uuid>)
 ```
-## Summary
-As of 2019-10-22, Payment functionality is available for:
+### Checkouts
+```python
+from models.amount_models import AmountModel, TotalAmountModel
+from models.buyer_models import BuyerModel
+from models.checkout_data_models import CheckoutDataModel
+from models.checkout_item_models import CheckoutItemModel
+from paymaya_sdk import PayMayaSDK
+
+paymaya = PayMayaSDK()
+paymaya.set_keys(
+    public_api_key=<PUBLIC_KEY>,
+    secret_api_key=<SECRET_KEY>,
+    environment=<"SANDBOX/PRODUCTION">
+)
+
+# The provided sample API keys don't seem to work for the PayMaya checkout sandbox, 
+# but this encoded string from their docs does: https://s3-us-west-2.amazonaws.com/developers.paymaya.com.pg/checkout/checkout.html 
+# so I provided a parameter to override the keys as needed
+checkout = paymaya.checkout('cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo=')
+
+buyer = BuyerModel(
+    first_name="Juan",
+    last_name="Dela Cruz",
+)
+item = CheckoutItemModel()
+item.name = "Crispy Pata"
+item.code = "FOOD-CP"
+item.quantity = "1"
+item.amount = Amount(total=Decimal(200), currency_code='PHP')
+item.total_amount = TotalAmountModel(
+    amount=AmountModel(
+        total=int(item.quantity) * item.amount.total,
+        currency_code=item.amount.curency_code
+    )
+)
+
+checkout_data = CheckoutDataModel()
+checkout_data.total_amount = item.total_amount
+checkout_data.buyer = buyer
+checkout_data.items = [item.as_dict()]
+checkout_data.request_reference_number = "REF-MERCHANT-GENERATED"
+
+# optionally:
+# checkout_data.redirect_urls = {
+#     "success": "http://www.askthemaya.com/",
+#     "failure": "http://www.askthemaya.com/failure?id=6319921",
+#     "cancel": "http://www.askthemaya.com/cancel?id=6319921"
+# }
+# and
+# checkout_data.metadata = {...}
+
+checkout.initiate(checkout_data)
+
+result = checkout.execute()
+```
+## Summary/Changelog
+2019-10-23
+Checkout functionality
+Trying out non-Singleton implementation
+
+2019-10-22: 
+Payment functionality is available for:
 - creating tokens
 - executing payments
 - querying payments
