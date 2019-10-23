@@ -3,7 +3,7 @@ PayMaya test cards
 Source: https://developers.paymaya.com/blog/entry/api-test-merchants-and-test-cards
 """
 
-from models.card_model import CardModel
+from models.card_models import CardModel
 
 ms_1 = CardModel(
     number="5123456789012346",
