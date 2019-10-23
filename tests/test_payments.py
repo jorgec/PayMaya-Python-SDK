@@ -4,7 +4,6 @@ import unittest
 
 from faker import Faker
 
-from api.payment_api import PaymentAPI
 from models.amount_models import AmountModel
 from models.buyer_models import BuyerModel
 from paymaya_sdk import PayMayaSDK
@@ -16,16 +15,30 @@ fake = Faker()
 
 class PaymentTests(unittest.TestCase):
     def test_token(self):
-        PayMayaSDK.get_instance().init_payment(
-            public_api_key=m1.public_key, secret_api_key=m1.secret_key
+        paymaya = PayMayaSDK()
+        paymaya.set_keys(
+            public_api_key=m1.public_key,
+            secret_api_key=m1.secret_key,
         )
 
-        payment = PaymentAPI()
+        payment = paymaya.payment()
         payment.card = ms_2
 
         token_result = payment.create_token()
 
         assert token_result
+
+    def test_payment(self):
+        paymaya = PayMayaSDK()
+        paymaya.set_keys(
+            public_api_key=m1.public_key,
+            secret_api_key=m1.secret_key,
+        )
+
+        payment = paymaya.payment()
+        payment.card = ms_2
+
+        payment.create_token()
 
         amt = decimal.Decimal(random.uniform(100, 10000))
         amount = AmountModel(total=amt, currency_code="PHP")

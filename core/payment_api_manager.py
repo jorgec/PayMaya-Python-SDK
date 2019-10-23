@@ -1,5 +1,5 @@
 import base64
-from typing import Dict, List
+from typing import Dict, List, TypeVar, Generic
 
 from core.constants import (
     PRODUCTION,
@@ -14,7 +14,8 @@ from models.amount_models import AmountModel
 from models.buyer_models import BuyerModel
 from models.card_models import CardModel
 from models.payment_models import PaymentModel
-from paymaya_sdk import PayMayaSDK
+
+PayMayaSDK = TypeVar("PayMayaSDK")
 
 
 class PaymentAPIManager:
@@ -30,11 +31,10 @@ class PaymentAPIManager:
     amount: AmountModel = None
     payments: List = []
 
-    def __init__(self):
-        instance = PayMayaSDK.get_instance()
-        self.public_api_key = instance.payments_public_api_key
-        self.secret_api_key = instance.payments_secret_api_key
-        self.environment = instance.payments_environment
+    def __init__(self, instance: Generic[PayMayaSDK]):
+        self.public_api_key = instance.public_api_key
+        self.secret_api_key = instance.secret_api_key
+        self.environment = instance.environment
         self.base_url = self.get_base_url()
         self.http_headers = {"Content-Type": "application/json"}
 
@@ -71,7 +71,7 @@ class PaymentAPIManager:
             return True
         return False
 
-    def charge_card(
+    def execute_payment(
         self, buyer: BuyerModel, amount: AmountModel, redirect_urls: Dict = None
     ) -> bool:
         if not self.token:

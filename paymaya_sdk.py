@@ -21,40 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from singleton import Singleton
+from api import PaymentAPI, CheckoutAPI
 
 
-class PayMayaSDK(metaclass=Singleton):
-    instance = None
-    checkout_public_api_key: str
-    checkout_secret_api_key: str
-    checkout_environment: str
-    payments_public_api_key: str
-    payments_secret_api_key: str
-    payments_environment: str
+class PayMayaSDK:
+    api = None
+    public_api_key: str
+    secret_api_key: str
+    environment: str
 
-    @classmethod
-    def get_instance(cls):
-        if cls.instance is None:
-            cls.instance = PayMayaSDK()
-        return cls.instance
-
-    def init_checkout(
+    def set_keys(
         self,
         public_api_key: str = None,
         secret_api_key: str = None,
         environment: str = "SANDBOX",
-    ):
-        self.checkout_public_api_key = public_api_key
-        self.checkout_secret_api_key = secret_api_key
-        self.checkout_environment = environment
+    ) -> None:
+        self.public_api_key = public_api_key
+        self.secret_api_key = secret_api_key
+        self.environment = environment
 
-    def init_payment(
-        self,
-        public_api_key: str = None,
-        secret_api_key: str = None,
-        environment: str = "SANDBOX",
-    ):
-        self.payments_public_api_key = public_api_key
-        self.payments_secret_api_key = secret_api_key
-        self.payments_environment = environment
+    def checkout(self, encoded_key: str = None) -> CheckoutAPI:
+        self.api = CheckoutAPI(self, encoded_key)
+        return self.api
+
+    def payment(self) -> PaymentAPI:
+        self.api = PaymentAPI(self)
+        return self.api

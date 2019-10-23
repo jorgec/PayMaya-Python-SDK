@@ -1,4 +1,6 @@
-from typing import Dict, List
+from __future__ import annotations
+
+from typing import Dict, List, TypeVar, Generic
 
 from core.constants import REDIRECT_URLS
 from core.payment_api_manager import PaymentAPIManager
@@ -6,12 +8,16 @@ from models.amount_models import AmountModel
 from models.buyer_models import BuyerModel
 from models.card_models import CardModel
 
+PayMayaSDK = TypeVar("PayMayaSDK")
+
 
 class PaymentAPI:
     amount: AmountModel = None
     buyer: BuyerModel = None
     __card: CardModel = None
     redirect_urls: Dict = None
+
+    instance: Generic[PayMayaSDK]
 
     manager: PaymentAPIManager
 
@@ -30,10 +36,11 @@ class PaymentAPI:
     @card.setter
     def card(self, card: CardModel):
         self.__card = card
-        self.manager = PaymentAPIManager()
+        self.manager = PaymentAPIManager(self.instance)
 
-    def __init__(self):
-        self.manager = PaymentAPIManager()
+    def __init__(self, instance: Generic[PayMayaSDK]):
+        self.instance = instance
+        self.manager = PaymentAPIManager(instance)
 
     def create_token(self) -> bool:
         if not self.card:
@@ -57,7 +64,7 @@ class PaymentAPI:
         if not self.redirect_urls:
             self.redirect_urls = REDIRECT_URLS
 
-        result = self.manager.charge_card(
+        result = self.manager.execute_payment(
             buyer=self.buyer, amount=self.amount, redirect_urls=self.redirect_urls
         )
 

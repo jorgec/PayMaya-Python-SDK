@@ -10,6 +10,9 @@ class AmountModel:
         self.total = round(total, 2)
         self.currency_code = currency_code
 
+    def total_as_str(self):
+        return str(self.total)
+
     def as_dict(self):
         data = {"amount": str(self.total), "currency": self.currency_code}
 
@@ -51,14 +54,23 @@ class TotalAmountModel:
     amount: AmountModel
     details: TotalAmountDetailModel
 
+    def __init__(
+        self, amount: AmountModel = None, details: TotalAmountDetailModel = None
+    ):
+        if not amount:
+            amount = AmountModel()
+        self.amount = amount
+        self.details = details
+
     def as_dict(self):
         data = {
-            "totalAmount": {
-                "currency": self.amount.currency_code,
-                "value": self.amount.total,
-                "details": self.details.as_dict(),
-            }
+            "currency": self.amount.currency_code,
+            "value": self.amount.total_as_str(),
         }
+        if self.details:
+            data["details"] = self.details.as_dict()
+        else:
+            data["details"] = {}
         return data
 
     def serialize(self):

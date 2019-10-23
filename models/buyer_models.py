@@ -1,7 +1,7 @@
 import json
 
 
-class BuyerAddress:
+class BuyerAddressModel:
     address1: str
     address2: str
     city: str
@@ -44,7 +44,7 @@ class BuyerAddress:
         return json.dumps(self.as_dict())
 
 
-class BuyerContact:
+class BuyerContactModel:
     phone: str
     email: str
 
@@ -64,9 +64,9 @@ class BuyerModel:
     first_name: str
     middle_name: str
     last_name: str
-    contact: BuyerContact
-    billing_address: BuyerAddress
-    shipping_address: BuyerAddress
+    contact: BuyerContactModel
+    billing_address: BuyerAddressModel
+    shipping_address: BuyerAddressModel
     ip_address: str
 
     def __init__(
@@ -75,9 +75,9 @@ class BuyerModel:
         self.first_name = first_name
         self.middle_name = middle_name
         self.last_name = last_name
-        self.contact = BuyerContact()
-        self.billing_address = BuyerAddress()
-        self.shipping_address = BuyerAddress()
+        self.contact = BuyerContactModel()
+        self.billing_address = BuyerAddressModel()
+        self.shipping_address = BuyerAddressModel()
         self.ip_address = "0.0.0.0"
 
     def __str__(self):

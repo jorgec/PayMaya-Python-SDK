@@ -1,5 +1,5 @@
 import base64
-from typing import Dict
+from typing import Dict, TypeVar, Generic, List
 
 from core.constants import (
     PRODUCTION,
@@ -10,7 +10,9 @@ from core.constants import (
 from core.http_config import HTTPConfig, HTTP_POST
 from core.http_connection import HTTPConnection
 from models.checkout_data_models import CheckoutDataModel
-from paymaya_sdk import PayMayaSDK
+
+
+PayMayaSDK = TypeVar("PayMayaSDK")
 
 
 class CheckoutAPIManager:
@@ -20,14 +22,16 @@ class CheckoutAPIManager:
     base_url: str = None
     http_headers: Dict = None
     checkout_data: CheckoutDataModel = None
+    checkouts: List = []
+    encoded_key: str
 
-    def __init__(self):
-        instance = PayMayaSDK.get_instance()
-        self.public_api_key = instance.checkout_public_api_key
-        self.secret_api_key = instance.checkout_secret_api_key
-        self.environment = instance.checkout_environment
+    def __init__(self, instance: Generic[PayMayaSDK], encoded_key: str = ""):
+        self.public_api_key = instance.public_api_key
+        self.secret_api_key = instance.secret_api_key
+        self.environment = instance.environment
         self.base_url = self.get_base_url()
         self.http_headers = {"Content-Type": "application/json"}
+        self.encoded_key = encoded_key
 
     def get_base_url(self) -> str:
         if self.environment == PRODUCTION:
@@ -38,16 +42,20 @@ class CheckoutAPIManager:
         return url
 
     def use_basic_auth_with_api_key(self, api_key: str = None):
-        if not api_key:
+        if not api_key and not self.encoded_key:
             raise ValueError("API Key is required")
 
-        token = base64.b64encode(api_key.encode("utf-8"))
-        self.http_headers["Authorization"] = f"Basic {token.decode()}:"
+        if self.encoded_key:
+            token = self.encoded_key
+        else:
+            token = base64.b64encode(api_key.encode("utf-8")).decode()
+            self.encoded_key = token
+        self.http_headers["Authorization"] = f"Basic {token}:"
 
-    def initiate_checkout(self):
-        self.checkout_data = CheckoutDataModel()
+    def initiate_checkout(self, checkout_data: CheckoutDataModel):
+        self.checkout_data = checkout_data
 
-    def execute_checkout(self):
+    def execute_checkout(self) -> bool:
         if not self.checkout_data:
             raise ValueError("No Checkout Data")
 
@@ -63,6 +71,8 @@ class CheckoutAPIManager:
         payload = self.checkout_data.serialize()
 
         response = http_connection.execute(data=payload)
+
+        self.checkouts.append(response)
 
         if response.status_code == 200:
             return True
