@@ -26,24 +26,37 @@ from api import PaymentAPI, CheckoutAPI
 
 class PayMayaSDK:
     api = None
-    public_api_key: str
-    secret_api_key: str
-    environment: str
+    public_api_key: str = None
+    secret_api_key: str = None
+    environment: str = None
+    encoded_key: str = None
 
     def set_keys(
         self,
         public_api_key: str = None,
         secret_api_key: str = None,
         environment: str = "SANDBOX",
+        encoded_key: str = None,
     ) -> None:
         self.public_api_key = public_api_key
         self.secret_api_key = secret_api_key
         self.environment = environment
+        self.encoded_key = encoded_key
 
-    def checkout(self, encoded_key: str = None) -> CheckoutAPI:
-        self.api = CheckoutAPI(self, encoded_key)
+    def checkout(self) -> CheckoutAPI:
+        self.api = CheckoutAPI(
+            public_api_key=self.public_api_key,
+            secret_api_key=self.secret_api_key,
+            environment=self.environment,
+            encoded_key=self.encoded_key,
+        )
         return self.api
 
     def payment(self) -> PaymentAPI:
-        self.api = PaymentAPI(self)
+        self.api = PaymentAPI(
+            public_api_key=self.public_api_key,
+            secret_api_key=self.secret_api_key,
+            environment=self.environment,
+            encoded_key=self.encoded_key,
+        )
         return self.api

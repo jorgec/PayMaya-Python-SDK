@@ -117,16 +117,18 @@ from models.checkout_item_models import CheckoutItemModel
 from paymaya_sdk import PayMayaSDK
 
 paymaya = PayMayaSDK()
+
+# The provided sample API keys don't seem to work for the PayMaya checkout sandbox, 
+# but this encoded string from their docs does: 
+# https://s3-us-west-2.amazonaws.com/developers.paymaya.com.pg/checkout/checkout.html 
+# so I provided a parameter to override the keys as needed, for testing
 paymaya.set_keys(
     public_api_key=<PUBLIC_KEY>,
     secret_api_key=<SECRET_KEY>,
-    environment=<"SANDBOX/PRODUCTION">
+    environment=<"SANDBOX/PRODUCTION">,
+    encoded_key='cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo='
 )
-
-# The provided sample API keys don't seem to work for the PayMaya checkout sandbox, 
-# but this encoded string from their docs does: https://s3-us-west-2.amazonaws.com/developers.paymaya.com.pg/checkout/checkout.html 
-# so I provided a parameter to override the keys as needed
-checkout = paymaya.checkout('cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo=')
+checkout = paymaya.checkout()
 
 buyer = BuyerModel(
     first_name="Juan",

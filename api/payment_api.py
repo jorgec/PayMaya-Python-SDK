@@ -1,12 +1,12 @@
-from typing import Dict, List, TypeVar, Generic
+from typing import Dict, List
+
+import requests
 
 from core.constants import REDIRECT_URLS
 from core.payment_api_manager import PaymentAPIManager
 from models.amount_models import AmountModel
 from models.buyer_models import BuyerModel
 from models.card_models import CardModel
-
-PayMayaSDK = TypeVar("PayMayaSDK")
 
 
 class PaymentAPI:
@@ -15,7 +15,9 @@ class PaymentAPI:
     __card: CardModel = None
     redirect_urls: Dict = None
 
-    instance: Generic[PayMayaSDK]
+    public_api_key: str = None
+    secret_api_key: str = None
+    environment: str = "SANDBOX"
 
     manager: PaymentAPIManager
 
@@ -34,22 +36,29 @@ class PaymentAPI:
     @card.setter
     def card(self, card: CardModel):
         self.__card = card
-        self.manager = PaymentAPIManager(self.instance)
+        self.init_manager()
 
-    def __init__(self, instance: Generic[PayMayaSDK]):
-        self.instance = instance
-        self.manager = PaymentAPIManager(instance)
+    def __init__(self, *args, **kwargs):
+        self.public_api_key = kwargs.get("public_api_key")
+        self.secret_api_key = kwargs.get("secret_api_key")
+        self.environment = kwargs.get("environment")
+        self.init_manager()
 
-    def create_token(self) -> bool:
+    def init_manager(self):
+        self.manager = PaymentAPIManager(
+            public_api_key=self.public_api_key,
+            secret_api_key=self.secret_api_key,
+            environment=self.environment,
+        )
+
+    def create_token(self) -> requests.Response:
         if not self.card:
             raise ValueError("No card registered")
 
         result = self.manager.create_payment_token(card=self.card)
-        if result:
-            return True
-        return False
+        return result
 
-    def execute_payment(self) -> bool:
+    def execute_payment(self) -> requests.Response:
         if not self.token:
             raise AttributeError("No Token")
 

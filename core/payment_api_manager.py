@@ -1,6 +1,8 @@
-import base64
-from typing import Dict, List, TypeVar, Generic
+from typing import Dict, List
 
+import requests
+
+from core.api_manager import APIManager
 from core.constants import (
     PRODUCTION,
     PAYMENTS_PRODUCTION_URL,
@@ -15,28 +17,21 @@ from models.buyer_models import BuyerModel
 from models.card_models import CardModel
 from models.payment_models import PaymentModel
 
-PayMayaSDK = TypeVar("PayMayaSDK")
 
-
-class PaymentAPIManager:
-    public_api_key: str = None
-    secret_api_key: str = None
-    environment: str = None
+class PaymentAPIManager(APIManager):
     base_url: str = None
-    http_headers: Dict = None
     token: str = None
     token_state: str = None
     status_code: int = None
     buyer: BuyerModel = None
     amount: AmountModel = None
     payments: List = []
+    encoded_key: str = None
 
-    def __init__(self, instance: Generic[PayMayaSDK]):
-        self.public_api_key = instance.public_api_key
-        self.secret_api_key = instance.secret_api_key
-        self.environment = instance.environment
+    def __init__(self, *args, **kwargs):
         self.base_url = self.get_base_url()
-        self.http_headers = {"Content-Type": "application/json"}
+        self.encoded_key = kwargs.get("encoded_key", None)
+        super().__init__(*args, **kwargs)
 
     def get_base_url(self) -> str:
         if self.environment == PRODUCTION:
@@ -46,14 +41,7 @@ class PaymentAPIManager:
 
         return url
 
-    def use_basic_auth_with_api_key(self, api_key: str = None):
-        if not api_key:
-            raise ValueError("API Key is required")
-
-        token = base64.b64encode(api_key.encode("utf-8"))
-        self.http_headers["Authorization"] = f"Basic {token.decode()}:"
-
-    def create_payment_token(self, card: CardModel = None) -> bool:
+    def create_payment_token(self, card: CardModel = None) -> requests.Response:
         self.use_basic_auth_with_api_key(self.public_api_key)
         http_config = HTTPConfig(
             url=f"{self.base_url}{PAYMENTS_TOKEN_URL}",
@@ -68,12 +56,11 @@ class PaymentAPIManager:
             self.token = response.json().get("paymentTokenId", None)
             self.status_code = response.status_code
             self.token_state = response.json().get("state", None)
-            return True
-        return False
+        return response
 
     def execute_payment(
         self, buyer: BuyerModel, amount: AmountModel, redirect_urls: Dict = None
-    ) -> bool:
+    ) -> requests.Response:
         if not self.token:
             raise ValueError("Cannot pay without token")
 
@@ -102,13 +89,11 @@ class PaymentAPIManager:
         try:
             self.payments.append(response.json())
         except AttributeError:
-            return False
+            return response
         except KeyError:
-            return False
+            return response
 
-        if response.status_code == 200:
-            return True
-        return False
+        return response
 
     def query_payment(self, payment_id: str) -> Dict:
         data = {}
