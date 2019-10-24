@@ -1,6 +1,6 @@
 import requests
 
-from core.http_config import HTTPConfig, HTTP_POST, HTTP_GET
+from core.http_config import HTTPConfig, HTTP_POST, HTTP_GET, HTTP_PUT, HTTP_DELETE
 
 
 class HTTPConnection:
@@ -28,6 +28,10 @@ class HTTPConnection:
 
         elif self.http_config.method == HTTP_GET:
             response = requests.get(**params)
+        elif self.http_config.method == HTTP_PUT:
+            response = requests.put(**params)
+        elif self.http_config.method == HTTP_DELETE:
+            response = requests.delete(**params)
 
         else:
             raise ValueError("Method not implemented!")

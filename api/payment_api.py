@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 import requests
 
@@ -11,7 +11,7 @@ from models.card_models import CardModel
 
 class PaymentAPI:
     amount: AmountModel = None
-    buyer: BuyerModel = None
+    __buyer: BuyerModel = None
     __card: CardModel = None
     redirect_urls: Dict = None
 
@@ -28,6 +28,15 @@ class PaymentAPI:
     @token.setter
     def token(self, *args, **kwargs) -> None:
         pass
+
+    @property
+    def buyer(self) -> BuyerModel:
+        return self.__buyer
+
+    @buyer.setter
+    def buyer(self, buyer: BuyerModel) -> None:
+        self.__buyer = buyer
+        self.__card = None
 
     @property
     def card(self) -> CardModel:
@@ -77,8 +86,22 @@ class PaymentAPI:
 
         return result
 
-    def payments(self) -> List:
-        return self.manager.payments
-
-    def query_payment(self, payment_id: str) -> Dict:
+    def query_payment(self, payment_id: str) -> requests.Response:
         return self.manager.query_payment(payment_id)
+
+    def register_customer(self):
+        if not self.buyer:
+            raise AttributeError("No Customer/Buyer set")
+
+        return self.manager.register_customer(customer=self.buyer)
+
+    def query_customer(self, customer_id: str) -> requests.Response:
+        return self.manager.query_customer(customer_id)
+
+    def update_customer(
+        self, customer_id: str, fields: Dict = dict
+    ) -> requests.Response:
+        return self.manager.update_customer(customer_id=customer_id, fields=fields)
+
+    def delete_customer(self, customer_id: str) -> requests.Response:
+        return self.manager.delete_customer(customer_id)
