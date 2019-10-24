@@ -18,7 +18,7 @@ class PaymentModel:
         token: str,
         buyer: BuyerModel,
         amount: AmountModel,
-        urls: Dict = REDIRECT_URLS
+        urls: Dict = REDIRECT_URLS,
     ):
         self.token = token
         self.amount = amount

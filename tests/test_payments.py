@@ -26,7 +26,7 @@ class PaymentTests(unittest.TestCase):
 
         token_result = payment.create_token()
 
-        assert token_result
+        assert token_result, print(token_result.json())
 
     def test_payment(self):
         paymaya = PayMayaSDK()
@@ -53,6 +53,6 @@ class PaymentTests(unittest.TestCase):
         payment.amount = amount
         payment_result = payment.execute_payment()
 
-        assert payment_result
+        assert payment_result.status_code == 200, print(payment_result.json())
 
         assert payment.manager.payments

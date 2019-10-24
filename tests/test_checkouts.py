@@ -20,9 +20,10 @@ class CheckoutTests(unittest.TestCase):
         paymaya.set_keys(
             public_api_key=m1.public_key,
             secret_api_key=m1.secret_key,
+            encoded_key='cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo='
         )
 
-        checkout = paymaya.checkout('cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo=')
+        checkout = paymaya.checkout()
 
         amt = decimal.Decimal(random.uniform(100, 500))
         amount = AmountModel(total=amt, currency_code="PHP")
