@@ -175,3 +175,5 @@ Payment functionality is available for:
 - creating tokens
 - executing payments
 - querying payments
+
+Feel free to fork and clone, pull requests very much appreciated.
