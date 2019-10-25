@@ -14,7 +14,7 @@ class AmountModel:
         return str(self.total)
 
     def as_dict(self):
-        data = {"amount": str(self.total), "currency": self.currency_code}
+        data = {"amount": self.total_as_str(), "currency": self.currency_code}
 
         return data
 

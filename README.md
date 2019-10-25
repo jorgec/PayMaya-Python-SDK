@@ -106,7 +106,7 @@ payment.payments()
 ```
 #### 7. Query payments
 ```python
-payment.query_payment(payment_id=<uuid>)
+payment.get_payment(payment_id=<uuid>)
 ```
 ### Checkouts
 ```python
@@ -166,9 +166,15 @@ checkout.initiate(checkout_data)
 result = checkout.execute()
 ```
 ## Summary/Changelog
-2019-10-23
-Checkout functionality
-Trying out non-Singleton implementation
+2019-10-25:
+- Card Vault
+
+2019-10-24:
+- Customer Vault
+
+2019-10-23:
+- Checkout functionality
+- Trying out non-Singleton implementation
 
 2019-10-22: 
 Payment functionality is available for:
@@ -176,4 +182,10 @@ Payment functionality is available for:
 - executing payments
 - querying payments
 
-Feel free to fork and clone, pull requests very much appreciated.
+## Contributing
+Feel free to fork and clone, add documentation, etc. Pull requests very much appreciated.
+
+For security flaws/bugs, please email me at codingforcatfood [at] protonmail.com instead of creating an issue.
+
+## Tip Me
+Help feed my cats by sending a donation via PayPal to jorge.cosgayon [at] gmail.com

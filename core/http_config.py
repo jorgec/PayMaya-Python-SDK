@@ -3,6 +3,8 @@ from typing import Dict
 HEADER_SEPARATOR = ";"
 HTTP_GET = "GET"
 HTTP_POST = "POST"
+HTTP_PUT = "PUT"
+HTTP_DELETE = "DELETE"
 
 
 class HTTPConfig:

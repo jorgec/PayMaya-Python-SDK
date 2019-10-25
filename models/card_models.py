@@ -13,6 +13,8 @@ class CardModel:
     expiry_year: str
     cvc: str
     password: str
+    token: str = None
+    token_state: str = None
 
     def __init__(
         self,
@@ -24,15 +26,6 @@ class CardModel:
         card_type: str,
         password: str = None,
     ):
-        """
-
-        :param number:
-        :param expiry_month:
-        :param expiry_year:
-        :param cvc:
-        :param card_type:
-        :param password:
-        """
 
         if self.validate_cvc(cvc):
             self.cvc = cvc
@@ -99,5 +92,4 @@ class CardModel:
         return data
 
     def serialize(self):
-
         return json.dumps({"card": self.as_dict()})

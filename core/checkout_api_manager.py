@@ -9,8 +9,6 @@ from core.constants import (
     CHECKOUT_SANDBOX_URL,
     CHECKOUTS_URL,
 )
-from core.http_config import HTTPConfig, HTTP_POST
-from core.http_connection import HTTPConnection
 from models.checkout_data_models import CheckoutDataModel
 
 
@@ -31,26 +29,18 @@ class CheckoutAPIManager(APIManager):
 
         return url
 
-    def initiate_checkout(self, checkout_data: CheckoutDataModel):
+    def initiate_checkout(self, checkout_data: CheckoutDataModel) -> None:
+        """
+        Placeholder method in case we need to do some more pre-processing later
+        :param checkout_data:
+        :return:
+        """
         self.checkout_data = checkout_data
 
     def execute_checkout(self) -> requests.Response:
         if not self.checkout_data:
             raise ValueError("No Checkout Data")
 
-        self.use_basic_auth_with_api_key(self.secret_api_key)
+        url = f"{self.base_url}{CHECKOUTS_URL}"
 
-        http_config = HTTPConfig(
-            url=f"{self.base_url}{CHECKOUTS_URL}",
-            method=HTTP_POST,
-            headers=self.http_headers,
-        )
-        http_connection = HTTPConnection(config=http_config)
-
-        payload = self.checkout_data.serialize()
-
-        response = http_connection.execute(data=payload)
-
-        self.checkouts.append(response)
-
-        return response
+        return self.execute(url=url, payload=self.checkout_data.serialize())

@@ -1,4 +1,5 @@
-from typing import Dict, List
+import json
+from typing import Dict
 
 import requests
 
@@ -9,9 +10,9 @@ from core.constants import (
     PAYMENTS_SANDBOX_URL,
     PAYMENTS_TOKEN_URL,
     PAYMENTS_URL,
+    PAYMENT_VAULT_CUSTOMERS,
 )
-from core.http_config import HTTPConfig, HTTP_POST, HTTP_GET
-from core.http_connection import HTTPConnection
+from core.http_config import HTTP_PUT, HTTP_DELETE
 from models.amount_models import AmountModel
 from models.buyer_models import BuyerModel
 from models.card_models import CardModel
@@ -20,13 +21,6 @@ from models.payment_models import PaymentModel
 
 class PaymentAPIManager(APIManager):
     base_url: str = None
-    token: str = None
-    token_state: str = None
-    status_code: int = None
-    buyer: BuyerModel = None
-    amount: AmountModel = None
-    payments: List = []
-    encoded_key: str = None
 
     def __init__(self, *args, **kwargs):
         self.base_url = self.get_base_url()
@@ -41,71 +35,83 @@ class PaymentAPIManager(APIManager):
 
         return url
 
-    def create_payment_token(self, card: CardModel = None) -> requests.Response:
-        self.use_basic_auth_with_api_key(self.public_api_key)
-        http_config = HTTPConfig(
-            url=f"{self.base_url}{PAYMENTS_TOKEN_URL}",
-            method=HTTP_POST,
-            headers=self.http_headers,
-        )
-        http_connection = HTTPConnection(config=http_config)
-        payload = card.serialize()
-        response = http_connection.execute(data=payload)
-
-        if response.status_code == 200:
-            self.token = response.json().get("paymentTokenId", None)
-            self.status_code = response.status_code
-            self.token_state = response.json().get("state", None)
-        return response
+    def create_payment_token(self, card: CardModel) -> requests.Response:
+        url = f"{self.base_url}{PAYMENTS_TOKEN_URL}"
+        return self.execute(url=url, payload=card.serialize(), key="public")
 
     def execute_payment(
-        self, buyer: BuyerModel, amount: AmountModel, redirect_urls: Dict = None
+        self,
+        token: str,
+        buyer: BuyerModel,
+        amount: AmountModel,
+        redirect_urls: Dict = None,
     ) -> requests.Response:
-        if not self.token:
-            raise ValueError("Cannot pay without token")
 
-        self.use_basic_auth_with_api_key(self.secret_api_key)
-        self.buyer = buyer
-        self.amount = amount
-
-        http_config = HTTPConfig(
-            url=f"{self.base_url}{PAYMENTS_URL}",
-            method=HTTP_POST,
-            headers=self.http_headers,
-        )
-        http_connection = HTTPConnection(config=http_config)
-
-        payment_data = {"token": self.token, "buyer": self.buyer, "amount": self.amount}
-
+        url = f"{self.base_url}{PAYMENTS_URL}"
+        payment_data = {"token": token, "buyer": buyer, "amount": amount}
         if redirect_urls:
             payment_data["urls"] = redirect_urls
-
         payment = PaymentModel(**payment_data)
+        return self.execute(url=url, payload=payment.serialize())
 
-        payload = payment.serialize()
+    def get_payment(self, payment_id: str) -> requests.Response:
+        url = f"{self.base_url}{PAYMENTS_URL}/{payment_id}"
+        return self.query(url)
 
-        response = http_connection.execute(data=payload)
+    def register_customer(self, customer: BuyerModel) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}"
+        return self.execute(url=url, payload=customer.serialize())
 
-        try:
-            self.payments.append(response.json())
-        except AttributeError:
-            return response
-        except KeyError:
-            return response
+    def get_customer(self, customer_id: str) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{customer_id}"
+        return self.query(url=url)
 
-        return response
+    def update_customer(self, customer_id: str, fields: Dict = dict):
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{customer_id}"
+        payload = json.dumps(fields)
+        return self.execute(url=url, payload=payload, method=HTTP_PUT)
 
-    def query_payment(self, payment_id: str) -> Dict:
-        data = {}
-        self.use_basic_auth_with_api_key(self.secret_api_key)
-        http_config = HTTPConfig(
-            url=f"{self.base_url}{PAYMENTS_URL}/{payment_id}",
-            method=HTTP_GET,
-            headers=self.http_headers,
-        )
-        http_connection = HTTPConnection(config=http_config)
+    def delete_customer(self, customer_id: str):
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{customer_id}"
+        return self.execute(url=url, method=HTTP_DELETE)
 
-        response = http_connection.execute(data=None)
-        if response.status_code == 200:
-            data = response.json()
-        return data
+    def save_card_to_vault(
+        self, buyer: BuyerModel, card: CardModel, is_default: bool, redirect_urls: Dict
+    ) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{buyer.customer_id}/cards"
+        payload = {
+            "paymentTokenId": card.token,
+            "isDefault": is_default,
+            "redirectUrl": redirect_urls,
+        }
+        return self.execute(url=url, payload=json.dumps(payload))
+
+    def get_cards_in_vault(self, buyer: BuyerModel) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{buyer.customer_id}/cards"
+        return self.query(url=url)
+
+    def get_card_in_vault(
+        self, buyer: BuyerModel, card_token: str
+    ) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{buyer.customer_id}/cards/{card_token}"
+        return self.query(url=url)
+
+    def update_card_in_vault(
+        self, buyer: BuyerModel, card_token: str, fields: Dict
+    ) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{buyer.customer_id}/cards/{card_token}"
+        payload = json.dumps(fields)
+        return self.execute(url=url, payload=payload, method=HTTP_PUT)
+
+    def delete_card_in_vault(
+        self, buyer: BuyerModel, card_token: str
+    ) -> requests.Response:
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{buyer.customer_id}/cards/{card_token}"
+        return self.execute(url=url, method=HTTP_DELETE)
+
+    def execute_vault_payment(
+        self, buyer: BuyerModel, card: CardModel, amount: AmountModel
+    ):
+        url = f"{self.base_url}{PAYMENT_VAULT_CUSTOMERS}/{buyer.customer_id}/cards/{card.token}"
+        payload = {"totalAmount": amount.as_dict()}
+        return self.execute(url=url, payload=json.dumps(payload))
