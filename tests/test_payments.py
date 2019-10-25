@@ -16,10 +16,7 @@ fake = Faker()
 class PaymentTests(unittest.TestCase):
     def test_token(self):
         paymaya = PayMayaSDK()
-        paymaya.set_keys(
-            public_api_key=m1.public_key,
-            secret_api_key=m1.secret_key,
-        )
+        paymaya.set_keys(public_api_key=m1.public_key, secret_api_key=m1.secret_key)
 
         payment = paymaya.payment()
         payment.card = ms_2
@@ -30,10 +27,7 @@ class PaymentTests(unittest.TestCase):
 
     def test_payment(self):
         paymaya = PayMayaSDK()
-        paymaya.set_keys(
-            public_api_key=m1.public_key,
-            secret_api_key=m1.secret_key,
-        )
+        paymaya.set_keys(public_api_key=m1.public_key, secret_api_key=m1.secret_key)
 
         payment = paymaya.payment()
 
@@ -59,10 +53,7 @@ class PaymentTests(unittest.TestCase):
 
     def test_customer(self):
         paymaya = PayMayaSDK()
-        paymaya.set_keys(
-            public_api_key=m1.public_key,
-            secret_api_key=m1.secret_key,
-        )
+        paymaya.set_keys(public_api_key=m1.public_key, secret_api_key=m1.secret_key)
 
         payment = paymaya.payment()
 
@@ -83,14 +74,13 @@ class PaymentTests(unittest.TestCase):
         assert query_customer.status_code == 200, print(query_customer.json())
 
         update_customer = payment.update_customer(
-            customer_id=customer_id,
-            fields={
-                "firstName": "Macaluluoy"
-            }
+            customer_id=customer_id, fields={"firstName": "Macaluluoy"}
         )
         assert update_customer.status_code == 200, print(update_customer.json())
         query_customer = payment.get_customer(customer_id=customer_id)
-        assert query_customer.json().get("firstName") == "Macaluluoy", print(query_customer.json())
+        assert query_customer.json().get("firstName") == "Macaluluoy", print(
+            query_customer.json()
+        )
 
         payment.card = ms_2
         card_vault = payment.save_card_to_vault()
@@ -100,11 +90,15 @@ class PaymentTests(unittest.TestCase):
         cards_in_vault = payment.get_cards_in_vault()
         assert cards_in_vault.status_code == 200, print(cards_in_vault.json())
         assert len(cards_in_vault.json()) == 1, print(cards_in_vault.json())
-        assert cards_in_vault.json()[0].get('cardTokenId') == payment.token, print(cards_in_vault.json())
+        assert cards_in_vault.json()[0].get("cardTokenId") == payment.token, print(
+            cards_in_vault.json()
+        )
 
         card_in_vault = payment.get_card_in_vault(card_token=payment.token)
         assert card_in_vault.status_code == 200, print(card_in_vault.json())
-        assert card_in_vault.json().get('cardTokenId') == payment.token, print(card_in_vault.json())
+        assert card_in_vault.json().get("cardTokenId") == payment.token, print(
+            card_in_vault.json()
+        )
 
         # Updates keep failing with error: PY0026	Failed to update card details
         # Generic error for failed update of card. PayMaya issue?
