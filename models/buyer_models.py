@@ -68,6 +68,7 @@ class BuyerModel:
     billing_address: BuyerAddressModel
     shipping_address: BuyerAddressModel
     ip_address: str
+    customer_id: str
 
     def __init__(
         self, *, first_name: str = "", middle_name: str = "", last_name: str = ""
@@ -79,6 +80,7 @@ class BuyerModel:
         self.billing_address = BuyerAddressModel()
         self.shipping_address = BuyerAddressModel()
         self.ip_address = "0.0.0.0"
+        self.customer_id = ""
 
     def __str__(self):
         return f"{self.last_name}, {self.first_name}"
