@@ -53,11 +53,14 @@ class CheckoutAPI:
         url = f"{self.manager.base_url}{CHECKOUTS_URL}"
         return self.manager.execute(url=url, payload=self.checkout_data.serialize())
 
+    # The Webhooks API seems to be borked ¯\_(ツ)_/¯
+    # TODO: Tests
+
     def register_webhook(self, name: str, callback_url: str) -> requests.Response:
-        payload = {"name": name, "callbackUrl": callback_url}
+        payload = json.dumps({"name": name, "callbackUrl": callback_url})
         url = f"{self.manager.base_url}{WEBHOOKS_URL}"
 
-        return self.manager.execute(url=url, payload=json.dumps(payload))
+        return self.manager.execute(url=url, payload=payload)
 
     def get_webhooks(self) -> requests.Response:
         url = f"{self.manager.base_url}{WEBHOOKS_URL}"
