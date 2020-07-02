@@ -56,5 +56,12 @@ class CheckoutTests(unittest.TestCase):
         checkout.initiate(checkout_data)
 
         result = checkout.execute()
-
+        """
+        Checkout returns:
+        - result.json()
+        {
+            "checkoutId": <UUID>,
+            "redirectUrl": <URL>
+        }
+        """
         assert result
