@@ -20,7 +20,7 @@ class CheckoutTests(unittest.TestCase):
         paymaya.set_keys(
             public_api_key=m1.public_key,
             secret_api_key=m1.secret_key,
-            encoded_key='cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo='
+            encoded_key="cGstZW80c0wzOTNDV1U1S212ZUpVYVc4VjczMFRUZWkyelk4ekU0ZEhKRHhrRjo=",
         )
 
         checkout = paymaya.checkout()
@@ -40,10 +40,7 @@ class CheckoutTests(unittest.TestCase):
         item.quantity = fake.random_int(1, 10)
         item.amount = single_amount
         total_amount = TotalAmountModel(
-            amount=AmountModel(
-                total=item.quantity * amount.total,
-                currency_code='PHP'
-            )
+            amount=AmountModel(total=item.quantity * amount.total, currency_code="PHP")
         )
         item.total_amount = total_amount
 

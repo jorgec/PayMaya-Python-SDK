@@ -1,15 +1,16 @@
-from typing import TypeVar
+import json
+from typing import Dict
 
 import requests
 
 from core.checkout_api_manager import CheckoutAPIManager
+from core.constants import CHECKOUTS_URL, WEBHOOKS_URL, CUSTOMIZATIONS_URL
+from core.http_config import HTTP_PUT, HTTP_DELETE
+from models.checkout_customization_models import CheckoutCustomizationModel
 from models.checkout_data_models import CheckoutDataModel
-
-PayMayaSDK = TypeVar("PayMayaSDK")
 
 
 class CheckoutAPI:
-    instance: PayMayaSDK
     checkout_data: CheckoutDataModel
 
     public_api_key: str = None
@@ -37,8 +38,52 @@ class CheckoutAPI:
         self.manager = CheckoutAPIManager(**manager_data)
 
     def initiate(self, checkout_data: CheckoutDataModel) -> None:
+        """
+        Placeholder method in case we need to do some more pre-processing later
+        :param checkout_data:
+        :return:
+        """
+
         self.checkout_data = checkout_data
-        self.manager.initiate_checkout(self.checkout_data)
 
     def execute(self) -> requests.Response:
-        return self.manager.execute_checkout()
+        if not self.checkout_data:
+            raise ValueError("No Checkout Data")
+
+        url = f"{self.manager.base_url}{CHECKOUTS_URL}"
+        return self.manager.execute(url=url, payload=self.checkout_data.serialize())
+
+    # The Webhooks API seems to be borked ¯\_(ツ)_/¯
+    # TODO: Tests
+
+    def register_webhook(self, name: str, callback_url: str) -> requests.Response:
+        payload = json.dumps({"name": name, "callbackUrl": callback_url})
+        url = f"{self.manager.base_url}{WEBHOOKS_URL}"
+
+        return self.manager.execute(url=url, payload=payload)
+
+    def get_webhooks(self) -> requests.Response:
+        url = f"{self.manager.base_url}{WEBHOOKS_URL}"
+        return self.manager.query(url=url)
+
+    def update_webhook(self, webhook_id: str, fields: Dict) -> requests.Response:
+        url = f"{self.manager.base_url}{WEBHOOKS_URL}/{webhook_id}"
+        payload = json.dumps(fields)
+        return self.manager.execute(url=url, payload=payload, method=HTTP_PUT)
+
+    def delete_webhook(self, webhook_id: str):
+        url = f"{self.manager.base_url}{WEBHOOKS_URL}/{webhook_id}"
+        return self.manager.execute(url=url, method=HTTP_DELETE)
+
+    def register_customization(self, customization: CheckoutCustomizationModel):
+        url = f"{self.manager.base_url}{CUSTOMIZATIONS_URL}"
+        payload = customization.serialize()
+        return self.manager.execute(url=url, payload=payload)
+
+    def get_customizations(self):
+        url = f"{self.manager.base_url}{CUSTOMIZATIONS_URL}"
+        return self.manager.query(url=url)
+
+    def delete_customizations(self):
+        url = f"{self.manager.base_url}{CUSTOMIZATIONS_URL}"
+        return self.manager.execute(url=url, method=HTTP_DELETE)
