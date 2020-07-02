@@ -18,7 +18,8 @@ I've tried to pattern the flow on the existing PayMaya SDK libraries as much as 
 - pytest
 
 ## Installation
-- Clone this project
+`python -m pip install git+https://github.com/jorgec/PayMayaPythonSDK--Wheel`
+
 
 ## Prerequisites
 
